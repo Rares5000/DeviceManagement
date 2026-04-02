@@ -1,0 +1,12 @@
+using DeviceManagement.Core.DTOs;
+
+namespace DeviceManagement.Core.Interfaces;
+
+public interface IDeviceService
+{
+    Task<IEnumerable<DeviceDto>> GetAllAsync();
+    Task<DeviceDto> GetByIdAsync(int id);
+    Task<DeviceDto> CreateAsync(CreateDeviceDto deviceDto);
+    Task<DeviceDto> UpdateAsync(int id, UpdateDeviceDto deviceDto);
+    Task DeleteAsync(int id);
+}

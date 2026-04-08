@@ -2,26 +2,28 @@
   <mat-card class="auth-card">
     <mat-card-header>
       <mat-card-title>Login</mat-card-title>
+      <mat-card-subtitle>Device Management System</mat-card-subtitle>
     </mat-card-header>
+
     <mat-card-content>
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <mat-form-field class="full-width">
           <mat-label>Email</mat-label>
           <input matInput formControlName="email" type="email" />
-          <mat-error *ngIf="form.get('email')?.hasError('required')"
-            >Email is required</mat-error
-          >
-          <mat-error *ngIf="form.get('email')?.hasError('email')"
-            >Invalid email</mat-error
-          >
+          @if (form.get("email")?.hasError("required")) {
+            <mat-error>Email is required</mat-error>
+          }
+          @if (form.get("email")?.hasError("email")) {
+            <mat-error>Invalid email format</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field class="full-width">
           <mat-label>Password</mat-label>
           <input matInput formControlName="password" type="password" />
-          <mat-error *ngIf="form.get('password')?.hasError('required')"
-            >Password is required</mat-error
-          >
+          @if (form.get("password")?.hasError("required")) {
+            <mat-error>Password is required</mat-error>
+          }
         </mat-form-field>
 
         <button
@@ -29,12 +31,17 @@
           color="primary"
           type="submit"
           class="full-width"
-          [disabled]="form.invalid"
+          [disabled]="form.invalid || isLoading()"
         >
-          Login
+          @if (isLoading()) {
+            <mat-spinner diameter="20" />
+          } @else {
+            Login
+          }
         </button>
       </form>
     </mat-card-content>
+
     <mat-card-footer>
       <p>Don't have an account? <a routerLink="/auth/register">Register</a></p>
     </mat-card-footer>

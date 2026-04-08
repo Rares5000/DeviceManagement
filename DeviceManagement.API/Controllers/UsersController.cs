@@ -23,13 +23,14 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<UserDto>> GetById(int id)
+    public async Task<ActionResult<UserDto>> GetById(string id)
     {
         try
         {
             var user = await _userService.GetByIdAsync(id);
             return Ok(user);
-        } catch (KeyNotFoundException ex)
+        }
+        catch (KeyNotFoundException ex)
         {
             return NotFound(ex.Message);
         }

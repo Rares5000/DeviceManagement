@@ -21,7 +21,7 @@ public class UserRepository : IUserRepository
             .ToListAsync();
     }
 
-    public async Task<User?> GetByIdAsync(int id)
+    public async Task<User?> GetByIdAsync(string id)
     {
         return await _context.Users
             .Include(u => u.Devices)
@@ -31,20 +31,6 @@ public class UserRepository : IUserRepository
     public async Task<User?> GetByEmailAsync(string email)
     {
         return await _context.Users
-            .FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
-    }
-
-    public async Task<User> CreateAsync(User user)
-    {
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
-        return user;
-    }
-
-    public async Task<User> UpdateAsync(User user)
-    {
-        _context.Users.Update(user);
-        await _context.SaveChangesAsync();
-        return user;
+            .FirstOrDefaultAsync(u => u.NormalizedEmail == email.ToUpper());
     }
 }

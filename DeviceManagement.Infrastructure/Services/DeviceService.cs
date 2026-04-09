@@ -9,10 +9,12 @@ namespace DeviceManagement.Infrastructure.Services;
 public class DeviceService : IDeviceService
 {
     public readonly IDeviceRepository _deviceRepository;
+    private readonly IUserRepository _userRepository;
 
-    public DeviceService(IDeviceRepository deviceRepository)
+    public DeviceService(IDeviceRepository deviceRepository, IUserRepository userRepository)
     {
         _deviceRepository = deviceRepository;
+        _userRepository = userRepository;
     }
 
     public async Task<IEnumerable<DeviceDto>> GetAllAsync()
@@ -78,5 +80,37 @@ public class DeviceService : IDeviceService
         }
 
         await _deviceRepository.DeleteAsync(id);
+    }
+
+    public async Task<DeviceDto> AssignAsync(int deviceId, string userId)
+    {
+        var device = await _deviceRepository.GetByIdAsync(deviceId);
+        if (device == null)
+            throw new KeyNotFoundException("Device not found.");
+
+        if (device.UserId != null)
+            throw new InvalidOperationException("Device is already assigned to another user.");
+
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null)
+            throw new KeyNotFoundException("User not found.");
+
+        device.UserId = userId;
+        var updated = await _deviceRepository.UpdateAsync(device);
+        return updated.Adapt<DeviceDto>();
+    }
+
+    public async Task<DeviceDto> UnassignAsync(int deviceId, string userId)
+    {
+        var device = await _deviceRepository.GetByIdAsync(deviceId);
+        if (device == null)
+            throw new KeyNotFoundException("Device not found.");
+
+        if (device.UserId != userId)
+            throw new InvalidOperationException("This device is not assigned to you.");
+
+        device.UserId = null;
+        var updated = await _deviceRepository.UpdateAsync(device);
+        return updated.Adapt<DeviceDto>();
     }
 }

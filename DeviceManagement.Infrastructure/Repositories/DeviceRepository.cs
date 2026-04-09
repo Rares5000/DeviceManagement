@@ -53,8 +53,8 @@ public class DeviceRepository : IDeviceRepository
     }
 
     public async Task<bool> SerialNumberExistsAsync(string serialNumber)
-{
-    return await _context.Devices
-        .AnyAsync(d => d.SerialNumber.ToLower() == serialNumber.ToLower());
-}
+    {
+        return await _context.Devices
+            .AnyAsync(d => d.SerialNumber.ToLower() == serialNumber.ToLower());
+    }
 }

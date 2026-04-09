@@ -1,10 +1,13 @@
+using System.Security.Claims;
 using DeviceManagement.Core.DTOs;
 using DeviceManagement.Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DeviceManagement.API.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class DevicesController : ControllerBase
 {
@@ -74,6 +77,44 @@ public class DevicesController : ControllerBase
         } catch (KeyNotFoundException ex)
         {
             return NotFound(ex.Message);
+        }
+    }
+
+    [HttpPost("{id}/assign")]
+    public async Task<ActionResult<DeviceDto>> Assign(int id)
+    {
+        try
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var device = await _deviceService.AssignAsync(id, userId);
+            return Ok(device);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(ex.Message);
+        }
+    }
+
+    [HttpPost("{id}/unassign")]
+    public async Task<ActionResult<DeviceDto>> Unassign(int id)
+    {
+        try
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var device = await _deviceService.UnassignAsync(id, userId);
+            return Ok(device);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(ex.Message);
         }
     }
 }

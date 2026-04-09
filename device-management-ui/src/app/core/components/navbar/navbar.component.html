@@ -1,0 +1,31 @@
+<mat-toolbar color="primary">
+  <span routerLink="/devices" class="logo">Device Management</span>
+
+  <span class="spacer"></span>
+
+  @if (isAuthenticated()) {
+    <span class="user-info">
+      <mat-icon>person</mat-icon>
+      {{ currentUser()?.name }}
+    </span>
+
+    <button mat-icon-button [matMenuTriggerFor]="menu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+
+    <mat-menu #menu="matMenu">
+      <div class="menu-header">
+        <p class="menu-name">{{ currentUser()?.name }}</p>
+        <p class="menu-email">{{ currentUser()?.email }}</p>
+        <p class="menu-role">
+          {{ currentUser()?.role }} — {{ currentUser()?.location }}
+        </p>
+      </div>
+      <mat-divider />
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Logout
+      </button>
+    </mat-menu>
+  }
+</mat-toolbar>

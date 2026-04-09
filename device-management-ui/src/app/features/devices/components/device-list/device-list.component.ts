@@ -1,12 +1,13 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { DeviceService } from '../../../../core/services/device.service';
+import { AuthService } from '../../../../core/services/auth.service';
 import { Device } from '../../../../core/models/device.model';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
@@ -20,6 +21,7 @@ import { LoadingSpinnerComponent } from '../../../../shared/components/loading-s
     MatIconModule,
     MatSnackBarModule,
     MatDialogModule,
+    MatTooltipModule,
     LoadingSpinnerComponent,
     RouterLink,
   ],
@@ -27,15 +29,16 @@ import { LoadingSpinnerComponent } from '../../../../shared/components/loading-s
   styleUrls: ['./device-list.component.scss'],
 })
 export class DeviceListComponent {
-  // inject() în loc de constructor
   private deviceService = inject(DeviceService);
+  private authService = inject(AuthService);
   private router = inject(Router);
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
 
-  // Signals
   isLoading = signal(false);
   devices = signal<Device[]>([]);
+  currentUserId = this.authService.currentUserId;
+
   displayedColumns = [
     'name',
     'manufacturer',
@@ -47,7 +50,6 @@ export class DeviceListComponent {
     'actions',
   ];
 
-  // Computed signal - număr de device-uri asignate
   assignedCount = computed(
     () => this.devices().filter((d) => d.assignedUserId).length,
   );
@@ -99,5 +101,33 @@ export class DeviceListComponent {
         });
       }
     });
+  }
+
+  assignDevice(device: Device) {
+    this.deviceService.assign(device.id).subscribe({
+      next: () => {
+        this.snackBar.open(`${device.name} assigned to you`, 'Close', {
+          duration: 3000,
+        });
+        this.loadDevices();
+      },
+      error: (err) => this.snackBar.open(err, 'Close', { duration: 3000 }),
+    });
+  }
+
+  unassignDevice(device: Device) {
+    this.deviceService.unassign(device.id).subscribe({
+      next: () => {
+        this.snackBar.open(`${device.name} unassigned`, 'Close', {
+          duration: 3000,
+        });
+        this.loadDevices();
+      },
+      error: (err) => this.snackBar.open(err, 'Close', { duration: 3000 }),
+    });
+  }
+
+  isAssignedToCurrentUser(device: Device): boolean {
+    return device.assignedUserId === this.currentUserId();
   }
 }

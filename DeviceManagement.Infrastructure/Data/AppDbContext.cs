@@ -1,15 +1,15 @@
 using DeviceManagement.Core.Entities;
-using DeviceManagement.Core.Enums;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace DeviceManagement.Infrastructure.Data;
 
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityDbContext<User>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     public DbSet<Device> Devices { get; set; }
-    public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,7 +26,6 @@ public class AppDbContext : DbContext
             entity.Property(d => d.Processor).IsRequired().HasMaxLength(100);
             entity.Property(d => d.Description).HasMaxLength(500);
             entity.Property(d => d.SerialNumber).IsRequired().HasMaxLength(100);
-
             entity.HasIndex(d => d.SerialNumber).IsUnique();
 
             entity.HasOne(d => d.User)
@@ -37,12 +36,17 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(u => u.Id);
             entity.Property(u => u.Name).IsRequired().HasMaxLength(100);
-            entity.Property(u => u.Email).IsRequired().HasMaxLength(100);
-            entity.HasIndex(u => u.Email).IsUnique();
             entity.Property(u => u.Role).IsRequired().HasMaxLength(50);
             entity.Property(u => u.Location).IsRequired().HasMaxLength(100);
         });
+
+        modelBuilder.Entity<User>().ToTable("Users");
+        modelBuilder.Entity<IdentityRole>().ToTable("Roles");
+        modelBuilder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");
+        modelBuilder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
+        modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
+        modelBuilder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
+        modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
     }
 }

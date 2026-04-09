@@ -57,9 +57,15 @@
         <mat-header-cell *matHeaderCellDef>Assigned To</mat-header-cell>
         <mat-cell *matCellDef="let device">
           @if (device.assignedUserName) {
-            <span class="assigned">
+            <span
+              class="assigned"
+              [class.mine]="isAssignedToCurrentUser(device)"
+            >
               <mat-icon>person</mat-icon>
               {{ device.assignedUserName }}
+              @if (isAssignedToCurrentUser(device)) {
+                <span class="you-badge">You</span>
+              }
             </span>
           } @else {
             <span class="unassigned">Unassigned</span>
@@ -85,6 +91,26 @@
           >
             <mat-icon>edit</mat-icon>
           </button>
+
+          @if (!device.assignedUserId) {
+            <button
+              mat-icon-button
+              color="accent"
+              (click)="assignDevice(device)"
+              matTooltip="Assign to me"
+            >
+              <mat-icon>person_add</mat-icon>
+            </button>
+          } @else if (isAssignedToCurrentUser(device)) {
+            <button
+              mat-icon-button
+              (click)="unassignDevice(device)"
+              matTooltip="Unassign"
+            >
+              <mat-icon>person_remove</mat-icon>
+            </button>
+          }
+
           <button
             mat-icon-button
             color="warn"

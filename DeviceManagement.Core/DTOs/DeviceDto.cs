@@ -14,7 +14,7 @@ public class DeviceDto
     public int RamAmount { get; set; }
     public string Description { get; set; } = string.Empty;
     public string SerialNumber { get; set; } = string.Empty;
-    public int? AssignedUserId { get; set; }
+    public string? AssignedUserId { get; set; }
     public string? AssignedUserName { get; set; }
     public string? AssignedUserLocation { get; set; }
 }

@@ -14,7 +14,7 @@ export interface Device {
   ramAmount: number;
   serialNumber: string;
   description: string;
-  assignedUserId?: number;
+  assignedUserId?: string;
   assignedUserName?: string;
   assignedUserLocation?: string;
 }

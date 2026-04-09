@@ -8,19 +8,8 @@ public static class DataSeeder
 {
     public static async Task SeedAsync(AppDbContext context)
     {
-        if (await context.Users.AnyAsync() || await context.Devices.AnyAsync())
+        if (await context.Devices.AnyAsync())
             return;
-
-        var users = new List<User>
-        {
-            new() { Name = "User Test1", Email = "test1@company.com", Role = "Developer", Location = "Bucharest", PasswordHash = "placeholder" },
-            new() { Name = "User Test2", Email = "test2@company.com", Role = "QA Engineer", Location = "Cluj", PasswordHash = "placeholder" },
-            new() { Name = "User Test3", Email = "test3@company.com", Role = "Designer", Location = "Timisoara", PasswordHash = "placeholder" },
-            new() { Name = "User Test4", Email = "test4@company.com", Role = "Manager", Location = "Iasi", PasswordHash = "placeholder" }
-        };
-
-        await context.Users.AddRangeAsync(users);
-        await context.SaveChangesAsync();
 
         var devices = new List<Device>
         {
@@ -32,9 +21,9 @@ public static class DataSeeder
                 OsVersion = "17.0",
                 Processor = "A17 Pro",
                 RamAmount = 8,
-                Description = "High-performance Apple smartphone.",
                 SerialNumber = "APL-001",
-                UserId = users[0].Id
+                Description = "High-performance Apple smartphone.",
+                UserId = null
             },
             new() {
                 Name = "Samsung Galaxy S24",
@@ -44,9 +33,9 @@ public static class DataSeeder
                 OsVersion = "14.0",
                 Processor = "Snapdragon 8 Gen 3",
                 RamAmount = 12,
-                Description = "Flagship Samsung smartphone.",
                 SerialNumber = "SAM-001",
-                UserId = users[1].Id
+                Description = "Flagship Samsung smartphone.",
+                UserId = null
             },
             new() {
                 Name = "iPad Pro 12.9",
@@ -56,9 +45,9 @@ public static class DataSeeder
                 OsVersion = "17.0",
                 Processor = "M2",
                 RamAmount = 16,
-                Description = "Professional Apple tablet.",
                 SerialNumber = "APL-002",
-                UserId = users[2].Id
+                Description = "Professional Apple tablet.",
+                UserId = null
             },
             new() {
                 Name = "Samsung Galaxy Tab S9",
@@ -68,8 +57,8 @@ public static class DataSeeder
                 OsVersion = "13.0",
                 Processor = "Snapdragon 8 Gen 2",
                 RamAmount = 12,
-                Description = "Premium Samsung tablet.",
                 SerialNumber = "SAM-002",
+                Description = "Premium Samsung tablet.",
                 UserId = null
             },
             new() {
@@ -80,8 +69,8 @@ public static class DataSeeder
                 OsVersion = "14.0",
                 Processor = "Google Tensor G3",
                 RamAmount = 12,
-                Description = "Google's flagship smartphone.",
                 SerialNumber = "GOG-001",
+                Description = "Google flagship smartphone.",
                 UserId = null
             }
         };

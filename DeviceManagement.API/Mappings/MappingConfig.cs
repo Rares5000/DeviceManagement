@@ -14,5 +14,8 @@ public static class MappingConfig
             .Map(dest => dest.AssignedUserLocation, src => src.User != null ? src.User.Location : null);
 
         TypeAdapterConfig<User, UserDto>.NewConfig();
+
+        TypeAdapterConfig<User, AuthResponseDto>.NewConfig()
+            .Map(dest => dest.UserId, src => src.Id);
     }
 }

@@ -10,11 +10,17 @@ public class DeviceService : IDeviceService
 {
     public readonly IDeviceRepository _deviceRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IAIService _aiService;
 
-    public DeviceService(IDeviceRepository deviceRepository, IUserRepository userRepository)
+
+    public DeviceService(
+        IDeviceRepository deviceRepository, 
+        IUserRepository userRepository,
+        IAIService aiService)
     {
         _deviceRepository = deviceRepository;
         _userRepository = userRepository;
+        _aiService = aiService;
     }
 
     public async Task<IEnumerable<DeviceDto>> GetAllAsync()
@@ -110,6 +116,26 @@ public class DeviceService : IDeviceService
             throw new InvalidOperationException("This device is not assigned to you.");
 
         device.UserId = null;
+        var updated = await _deviceRepository.UpdateAsync(device);
+        return updated.Adapt<DeviceDto>();
+    }
+
+    public async Task<DeviceDto> GenerateDescriptionAsync(int id)
+    {
+        var device = await _deviceRepository.GetByIdAsync(id);
+        if (device == null)
+            throw new KeyNotFoundException("Device not found.");
+
+        var description = await _aiService.GenerateDeviceDescriptionAsync(
+            device.Name,
+            device.Manufacturer,
+            device.OperatingSystem,
+            device.Type.ToString(),
+            device.RamAmount,
+            device.Processor
+        );
+
+        device.Description = description;
         var updated = await _deviceRepository.UpdateAsync(device);
         return updated.Adapt<DeviceDto>();
     }

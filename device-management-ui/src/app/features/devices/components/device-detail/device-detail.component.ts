@@ -5,9 +5,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { DeviceService } from '../../../../core/services/device.service';
 import { Device } from '../../../../core/models/device.model';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-device-detail',
@@ -18,7 +20,9 @@ import { LoadingSpinnerComponent } from '../../../../shared/components/loading-s
     MatIconModule,
     MatChipsModule,
     MatSnackBarModule,
+    MatTooltipModule,
     LoadingSpinnerComponent,
+    MatProgressSpinner,
   ],
   templateUrl: './device-detail.component.html',
   styleUrls: ['./device-detail.component.scss'],
@@ -31,6 +35,7 @@ export class DeviceDetailComponent implements OnInit {
 
   device = signal<Device | undefined>(undefined);
   isLoading = signal(false);
+  isGenerating = signal(false);
 
   ngOnInit() {
     const id = this.route.snapshot.params['id'];
@@ -48,6 +53,26 @@ export class DeviceDetailComponent implements OnInit {
         this.snackBar.open(err, 'Close', { duration: 3000 });
         this.isLoading.set(false);
         this.router.navigate(['/devices']);
+      },
+    });
+  }
+
+  generateDescription() {
+    const id = this.device()?.id;
+    if (!id) return;
+
+    this.isGenerating.set(true);
+    this.deviceService.generateDescription(id).subscribe({
+      next: (device) => {
+        this.device.set(device);
+        this.isGenerating.set(false);
+        this.snackBar.open('Description generated successfully!', 'Close', {
+          duration: 3000,
+        });
+      },
+      error: (err) => {
+        this.snackBar.open(err, 'Close', { duration: 3000 });
+        this.isGenerating.set(false);
       },
     });
   }

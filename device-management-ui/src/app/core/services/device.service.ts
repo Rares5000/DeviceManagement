@@ -38,4 +38,11 @@ export class DeviceService {
   unassign(deviceId: number): Observable<Device> {
     return this.http.post<Device>(`${this.apiUrl}/${deviceId}/unassign`, {});
   }
+
+  generateDescription(deviceId: number): Observable<Device> {
+    return this.http.post<Device>(
+      `${this.apiUrl}/${deviceId}/generate-description`,
+      {},
+    );
+  }
 }

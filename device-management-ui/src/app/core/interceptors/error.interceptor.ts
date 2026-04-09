@@ -13,6 +13,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           case 400:
             errorMessage = error.error || 'Bad request';
             break;
+          case 401:
+            errorMessage = error.error || 'Invalid email or password';
+            break;
           case 404:
             errorMessage = 'Resource not found';
             break;

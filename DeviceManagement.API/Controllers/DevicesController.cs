@@ -117,4 +117,26 @@ public class DevicesController : ControllerBase
             return Conflict(ex.Message);
         }
     }
+
+    [HttpPost("{id}/generate-description")]
+    public async Task<ActionResult<DeviceDto>> GenerateDescription(int id)
+    {
+        try
+        {
+            var device = await _deviceService.GenerateDescriptionAsync(id);
+            return Ok(device);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (HttpRequestException ex) when (ex.Message.Contains("credit balance"))
+        {
+            return StatusCode(503, "AI service unavailable - insufficient credits.");
+        }
+        catch (Exception)
+        {
+            return StatusCode(503, "AI service temporarily unavailable.");
+        }
+    }
 }

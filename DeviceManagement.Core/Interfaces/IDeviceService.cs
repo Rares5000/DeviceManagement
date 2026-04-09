@@ -11,4 +11,5 @@ public interface IDeviceService
     Task DeleteAsync(int id);
     Task<DeviceDto> AssignAsync(int deviceId, string userId);
     Task<DeviceDto> UnassignAsync(int deviceId, string userId);
+    Task<DeviceDto> GenerateDescriptionAsync(int id);
 }

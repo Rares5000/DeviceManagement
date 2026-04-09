@@ -22,6 +22,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           case 409:
             errorMessage = error.error || 'Conflict - resource already exists';
             break;
+          case 503:
+            errorMessage = error.error || 'AI service temporarily unavailable';
+            break;
           case 500:
             errorMessage = 'Internal server error';
             break;

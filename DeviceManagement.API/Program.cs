@@ -60,6 +60,10 @@ builder.Services.AddScoped<IDeviceService, DeviceService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IAIService, AIService>();
+
+var aiSettings = builder.Configuration.GetSection("AI").Get<AISettings>()!;
+builder.Services.AddSingleton(aiSettings);
 
 builder.Services.AddCors(options =>
 {

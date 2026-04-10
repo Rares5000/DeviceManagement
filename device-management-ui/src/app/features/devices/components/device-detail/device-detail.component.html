@@ -1,0 +1,92 @@
+<div class="container">
+  @if (isLoading()) {
+    <app-loading-spinner />
+  }
+
+  @if (device(); as device) {
+    <div class="header">
+      <button mat-icon-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1>{{ device.name }}</h1>
+      <button mat-raised-button color="primary" (click)="editDevice()">
+        <mat-icon>edit</mat-icon>
+        Edit
+      </button>
+    </div>
+
+    <mat-card>
+      <mat-card-content>
+        <div class="details-grid">
+          <div class="detail-item">
+            <span class="label">Manufacturer</span>
+            <span class="value">{{ device.manufacturer }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Type</span>
+            <mat-chip>{{ device.type }}</mat-chip>
+          </div>
+          <div class="detail-item">
+            <span class="label">Operating System</span>
+            <span class="value"
+              >{{ device.operatingSystem }} {{ device.osVersion }}</span
+            >
+          </div>
+          <div class="detail-item">
+            <span class="label">Processor</span>
+            <span class="value">{{ device.processor }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">RAM</span>
+            <span class="value">{{ device.ramAmount }} GB</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Serial Number</span>
+            <span class="value">{{ device.serialNumber }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Assigned To</span>
+            @if (device.assignedUserName) {
+              <span class="assigned">
+                {{ device.assignedUserName }} —
+                {{ device.assignedUserLocation }}
+              </span>
+            } @else {
+              <span class="unassigned">Unassigned</span>
+            }
+          </div>
+
+          <div class="detail-item full-width description-section">
+            <div class="description-header">
+              <span class="label">Description</span>
+              <button
+                mat-stroked-button
+                color="primary"
+                (click)="generateDescription()"
+                [disabled]="isGenerating()"
+                matTooltip="Generate AI description"
+              >
+                @if (isGenerating()) {
+                  <mat-spinner diameter="16" />
+                  Generating...
+                } @else {
+                  <ng-container>
+                    <mat-icon>auto_awesome</mat-icon>
+                    Generate with AI
+                  </ng-container>
+                }
+              </button>
+            </div>
+            @if (device.description) {
+              <span class="value description">{{ device.description }}</span>
+            } @else {
+              <span class="unassigned"
+                >No description. Click "Generate with AI" to create one.</span
+              >
+            }
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

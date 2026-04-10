@@ -1,0 +1,101 @@
+<div class="container">
+  <h1>{{ isEditMode() ? "Edit Device" : "Add Device" }}</h1>
+
+  @if (isLoading()) {
+    <app-loading-spinner />
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-grid">
+        <mat-form-field>
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name" />
+          @if (form.get("name")?.hasError("required")) {
+            <mat-error>Name is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Manufacturer</mat-label>
+          <input matInput formControlName="manufacturer" />
+          @if (form.get("manufacturer")?.hasError("required")) {
+            <mat-error>Manufacturer is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Type</mat-label>
+          <mat-select formControlName="type">
+            <mat-option [value]="DeviceType.Phone">Phone</mat-option>
+            <mat-option [value]="DeviceType.Tablet">Tablet</mat-option>
+          </mat-select>
+          @if (form.get("type")?.hasError("required")) {
+            <mat-error>Type is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Operating System</mat-label>
+          <input matInput formControlName="operatingSystem" />
+          @if (form.get("operatingSystem")?.hasError("required")) {
+            <mat-error>OS is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>OS Version</mat-label>
+          <input matInput formControlName="osVersion" />
+          @if (form.get("osVersion")?.hasError("required")) {
+            <mat-error>OS Version is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Processor</mat-label>
+          <input matInput formControlName="processor" />
+          @if (form.get("processor")?.hasError("required")) {
+            <mat-error>Processor is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>RAM (GB)</mat-label>
+          <input matInput type="number" formControlName="ramAmount" />
+          @if (form.get("ramAmount")?.hasError("required")) {
+            <mat-error>RAM is required</mat-error>
+          }
+          @if (form.get("ramAmount")?.hasError("min")) {
+            <mat-error>Minimum 1 GB</mat-error>
+          }
+          @if (form.get("ramAmount")?.hasError("max")) {
+            <mat-error>Maximum 64 GB</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Serial Number</mat-label>
+          <input matInput formControlName="serialNumber" />
+          @if (form.get("serialNumber")?.hasError("required")) {
+            <mat-error>Serial Number is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" rows="3"></textarea>
+        </mat-form-field>
+      </div>
+
+      <div class="actions">
+        <button mat-button type="button" (click)="goBack()">Cancel</button>
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="form.invalid || isLoading()"
+        >
+          {{ isEditMode() ? "Update" : "Create" }}
+        </button>
+      </div>
+    </form>
+  }
+</div>

@@ -1,0 +1,53 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: device-management-db
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Admin1234!"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P Admin1234! -Q 'SELECT 1' -No",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  api:
+    build:
+      context: .
+      dockerfile: DeviceManagement.API/Dockerfile
+    container_name: device-management-api
+    ports:
+      - "5001:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CONNECTIONSTRINGS__DEFAULTCONNECTION=${CONNECTIONSTRINGS__DEFAULTCONNECTION}
+      - JWTSETTINGS__SECRET=${JWTSETTINGS__SECRET}
+      - JWTSETTINGS__ISSUER=DeviceManagement
+      - JWTSETTINGS__AUDIENCE=DeviceManagement
+      - JWTSETTINGS__EXPIRATIONINDAYS=7
+      - AI__APIKEY=${AI__APIKEY}
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./device-management-ui
+      dockerfile: Dockerfile
+    container_name: device-management-ui
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+
+volumes:
+  sqlserver_data:

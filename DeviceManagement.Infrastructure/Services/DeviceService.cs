@@ -139,4 +139,10 @@ public class DeviceService : IDeviceService
         var updated = await _deviceRepository.UpdateAsync(device);
         return updated.Adapt<DeviceDto>();
     }
+
+    public async Task<IEnumerable<DeviceDto>> SearchAsync(string query)
+    {
+        var devices = await _deviceRepository.SearchAsync(query);
+        return devices.Adapt<List<DeviceDto>>();
+    }
 }

@@ -139,4 +139,16 @@ public class DevicesController : ControllerBase
             return StatusCode(503, "AI service temporarily unavailable.");
         }
     }
+
+    [HttpGet("search")]
+    public async Task<ActionResult<IEnumerable<DeviceDto>>> Search([FromQuery] string query)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return BadRequest("Search query cannot be empty.");
+        }
+
+        var devices = await _deviceService.SearchAsync(query);
+        return Ok(devices);
+    }
 }

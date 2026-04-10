@@ -6,18 +6,39 @@
         >{{ assignedCount() }} / {{ devices().length }} assigned</span
       >
     </div>
-    <button mat-raised-button color="primary" routerLink="/devices/new">
-      <mat-icon>add</mat-icon>
-      Add Device
-    </button>
+    <div class="header-actions">
+      <button mat-raised-button color="primary" routerLink="/devices/new">
+        <mat-icon>add</mat-icon>
+        Add Device
+      </button>
+    </div>
   </div>
 
-  @if (isLoading()) {
+  <div class="search-container">
+    <app-search-bar
+      (searched)="onSearch($event)"
+      (cleared)="onSearchCleared()"
+    />
+
+    @if (searchQuery()) {
+      <span class="search-info">
+        Results for: <strong>{{ searchQuery() }}</strong> —
+        {{ devices().length }} found
+      </span>
+    }
+  </div>
+
+  @if (isLoading() || isSearching()) {
     <app-loading-spinner />
   } @else if (devices().length === 0) {
     <div class="empty-state">
-      <mat-icon>devices</mat-icon>
-      <p>No devices found. Add your first device!</p>
+      @if (searchQuery()) {
+        <mat-icon>search_off</mat-icon>
+        <p>No devices found for "{{ searchQuery() }}"</p>
+      } @else {
+        <mat-icon>devices</mat-icon>
+        <p>No devices found. Add your first device!</p>
+      }
     </div>
   } @else {
     <mat-table [dataSource]="devices()">

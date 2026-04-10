@@ -10,4 +10,5 @@ public interface IDeviceRepository
     Task<Device> UpdateAsync(Device device);
     Task DeleteAsync(int id);
     Task<bool> SerialNumberExistsAsync(string serialNumber);
+    Task<IEnumerable<Device>> SearchAsync(string query);
 }

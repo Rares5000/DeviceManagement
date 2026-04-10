@@ -45,4 +45,10 @@ export class DeviceService {
       {},
     );
   }
+
+  search(query: string): Observable<Device[]> {
+    return this.http.get<Device[]>(
+      `${this.apiUrl}/search?query=${encodeURIComponent(query)}`,
+    );
+  }
 }

@@ -11,6 +11,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { Device } from '../../../../core/models/device.model';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
+import { SearchBarComponent } from '../../../../shared/components/search-bar/search-bar.component';
 
 @Component({
   selector: 'app-device-list',
@@ -23,6 +24,7 @@ import { LoadingSpinnerComponent } from '../../../../shared/components/loading-s
     MatDialogModule,
     MatTooltipModule,
     LoadingSpinnerComponent,
+    SearchBarComponent,
     RouterLink,
   ],
   templateUrl: './device-list.component.html',
@@ -36,6 +38,8 @@ export class DeviceListComponent {
   private snackBar = inject(MatSnackBar);
 
   isLoading = signal(false);
+  isSearching = signal(false);
+  searchQuery = signal('');
   devices = signal<Device[]>([]);
   currentUserId = this.authService.currentUserId;
 
@@ -70,6 +74,26 @@ export class DeviceListComponent {
         this.isLoading.set(false);
       },
     });
+  }
+
+  onSearch(query: string) {
+    this.searchQuery.set(query);
+    this.isSearching.set(true);
+    this.deviceService.search(query).subscribe({
+      next: (devices) => {
+        this.devices.set(devices);
+        this.isSearching.set(false);
+      },
+      error: (err) => {
+        this.snackBar.open(err, 'Close', { duration: 3000 });
+        this.isSearching.set(false);
+      },
+    });
+  }
+
+  onSearchCleared() {
+    this.searchQuery.set('');
+    this.loadDevices();
   }
 
   viewDevice(id: number) {

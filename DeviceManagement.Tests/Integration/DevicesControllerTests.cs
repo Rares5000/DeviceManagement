@@ -44,6 +44,14 @@ public class DevicesControllerTests : IClassFixture<WebApplicationFactory<Progra
                 services.AddScoped<IUserRepository, UserRepository>();
                 services.AddScoped<IDeviceService, DeviceService>();
                 services.AddScoped<IUserService, UserService>();
+
+                services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = "Test";
+                    options.DefaultChallengeScheme = "Test";
+                })
+                .AddScheme<Microsoft.AspNetCore.Authentication.AuthenticationSchemeOptions,
+                    TestAuthHandler>("Test", options => { });
             });
         });
     }
